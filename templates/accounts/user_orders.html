@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<main>
+    <div class="grids">
+        <section class="member-center">
+            <div class="member-center-wrapper">
+                <section class="tabset">
+                    <div class="tabs">
+                        <div class="clearfix">
+                            <a class="logout pull-right" href="{% url 'logout' %}">Logout</a>
+                        </div>
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'dashboard' %}">Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page">Orders</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="tab-content">
+                        <div class="orders-container">
+                            <div class="orders-table">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">Order No.</th>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Status</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for order in orders %}
+                                    <tr>
+                                        <td scope="row">{{ order.order_number }}</td>
+                                        <td>{{ order.created_at }}</td>
+                                        <td>${{ order.order_total|floatformat:"0" }}</td>
+                                        <td>{{ order.status }}</td>
+                                        <td class="order-list-buttons">
+                                            <a class="btn view-order-btn" href="{% url 'order_detail' order.order_number %}">View</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </div>
+</main>
+
+{% endblock %}

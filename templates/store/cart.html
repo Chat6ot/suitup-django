@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main>
+    <div class="grids">
+        <div class="selected-product">
+            <div class="container">
+                <div class="checkout-nav">
+                        <span class="step active">
+                            <span class="badges">
+                                <span class="text">1</span>
+                            </span>
+                            <span>Shopping Cart</span>
+                        </span>
+                    <span class="step">
+                            <span class="badges">
+                                <span class="text">2</span>
+                            </span>
+                            <span>Fill Information</span>
+                        </span>
+                    <span class="step">
+                            <span class="badges">
+                                <span class="text">3</span>
+                            </span>
+                            <span>Order Confirmation</span>
+                        </span>
+                </div>
+                {% if not cart_items %}
+                <div class="shopping-cart-empty">
+                    <div class="empty-body">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <h4>Your Shopping Cart is Empty</h4>
+                        <a href="/" class="btn continue-shopping-btn">Continue Shopping</a>
+                    </div>
+                </div>
+
+                {% else %}
+                <section class="shopping-cart">
+                    <div class="section-header">
+                        {% if quantity == 1 %}
+                        <h5>Shopping Cart ({{ quantity }} item)</h5>
+                        {% else %}
+                        <h5>Shopping Cart ({{ quantity }} items)</h5>
+                        {% endif %}
+                    </div>
+                    <div class="cart-items">
+                        <div class="table-header row">
+                            <div class="col-sm-3">Product Information</div>
+                            <div class="col-sm-2">Promotions</div>
+                            <div class="col-sm-2 text-center">Unit Price</div>
+                            <div class="col-sm-2 text-center">QTY</div>
+                            <div class="col-sm-2 text-center">Subtotal</div>
+                            <div class="col-sm-1"></div>
+                        </div>
+                        {% for cart_item in cart_items %}
+                        <div class="table-row row">
+                            <div class="col-xs-12 col-sm-3">
+                                <a href="{{ cart_item.product.get_url }}" class="product-image"
+                                   style="background-image: url({{ cart_item.product.image.url }})"> </a>
+                                <div class="product-name">
+                                    <span>{{ cart_item.product.product_name }}</span>
+                                    {% if cart_item.variations.all %}
+                                    {% for item in cart_item.variations.all %}
+                                    <span class="variant-name">
+                                        {{ item.variation_category | capfirst }}: {{ item.variation_value | capfirst }}
+                                    </span>
+                                    {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-2"></div>
+                            <div class="col-xs-12 col-sm-2 text-center">${{ cart_item.product.price }}</div>
+                            <div class="col-xs-12 col-sm-2 text-center">
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <a href="{% url 'decrease_cart' cart_item.product.id cart_item.id %}"
+                                           class="btn decrease-btn"
+                                           type="button">
+                                            <i class="fa-solid fa-minus"></i>
+                                        </a>
+                                    </div>
+                                    <input type="number" name="item-quantity" class="input-item-quantity"
+                                           value="{{ cart_item.quantity }}">
+                                    <div class="input-group-btn">
+                                        <form action="{% url 'add_to_cart' cart_item.product.id %}" method="POST">
+                                            {% csrf_token %}
+                                            {% for item in cart_item.variations.all %}
+                                            <input type="hidden" name="{{ item.variation_category }}"
+                                                   value="{{ item.variation_value }}">
+                                            {% endfor %}
+                                            <button class="btn increase-btn" type="submit" name="add_to_cart" value="True">
+                                                <i class="fa-solid fa-plus"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-2 price-label text-center">${{ cart_item.sub_total }}</div>
+                            <div class="col-xs-12 col-sm-1 text-center">
+                                <a href="{% url 'remove_cart' cart_item.product.id cart_item.id%}"
+                                   onclick="return confirm('Are you sure you want to delete this item?')"
+                                   class="remove-btn">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </section>
+                <form method="post" action="{% url 'checkout' %}">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-7 col-md-8">
+                            <section class="order-form">
+                                <div class="section-header">
+                                    <h5>Select Delivery & Payment Method</h5>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-group">
+                                        <label for="order-delivery-country">Shipping Destination</label>
+                                        <select id="order-delivery-country" class="form-control"
+                                                name="delivery_country">
+                                            <option value="TW">Taiwan</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="order-delivery-method">Delivery Method</label>
+                                        <select id="order-delivery-method" class="form-control"
+                                                name="delivery_method">
+                                            <option value="Chunghwa_Post">Chunghwa Post</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-5 col-md-4">
+                            <section class="order-summary">
+                                <div class="section-header"><h5>Order Summary</h5></div>
+                                <div class="section-body">
+                                    <div class="section-line clearfix">
+                                        <span class="pull-left">Item Subtotal:</span>
+                                        <span class="pull-right">${{ total }}</span>
+                                    </div>
+                                    <div class="section-line clearfix">
+                                        <span class="pull-left">Delivery Fee:</span>
+                                        <span class="pull-right">${{ delivery_fee }}</span>
+                                    </div>
+                                    <hr>
+                                    <div class="section-line total clearfix">
+                                        <span class="pull-left">Total:</span>
+                                        <span class="pull-right">${{ grand_total }}</span>
+                                    </div>
+                                    <button class="btn checkout-btn" type="submit">Proceed to Checkout</button>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

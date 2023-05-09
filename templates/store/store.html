@@ -1,0 +1,140 @@
+{% extends "base.html" %} {% block content %}
+<main>
+    <div class="grids">
+        {% include "includes/product_list.html" %}
+        <div class="container">
+            <div class="store clearfix">
+                <div class="tags-box">
+                    <ul class="category-menu">
+                        {% for category in links %}
+                        <li class="list-item">
+                            <a class="label" href="{{ category.get_url }}">【 {{ category.category_name }} 】</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="shop-box">
+                    {% if product_count %}
+                    <div class="shop-box-info">
+                        <h3>
+                            {% if categories %} {{ categories.category_name }}
+                            {% elif "search" in request.path %}
+                            View All
+                            {% else %}
+                            All Product
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="row">
+                        {% for product in products %}
+                        <article class="col-md-4 col-sm-6">
+                            {% if product.stock < 1 %}
+                            <form action="{{ product.get_url }}">
+                                {% csrf_token %}
+                                <button class="btn btn-in-card" type="submit">
+                                    VIEW DETAILS
+                                </button>
+                            </form>
+                            {% else %}
+                            <form action="{% url 'add_to_cart' product.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-in-card" type="submit" name="add_to_cart" value="True">
+                                    ADD TO CART
+                                </button>
+                            </form>
+                            {% endif %}
+                            <div class="card">
+                                <a href="{{ product.get_url }}">
+                                    <div class="image">
+                                        <img src="{{ product.image.url }}" alt="Silver Suit"/>
+                                    </div>
+                                    <div class="info-box">
+                                        <div class="title">{{ product.product_name }}</div>
+                                        <div class="price">${{ product.price }}</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </article>
+                        {% endfor %}
+                        <div class="col-sm-12 text-center">
+                            {% if products.has_other_pages %}
+                            <nav>
+                                <ul class="productList-paginator pagination justify-content-end">
+                                    {% if products.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link arrow" href="?page={{ products.previous_page_number }}"
+                                           aria-label="Previous">
+                                              <span aria-hidden="true">
+                                                <i class="fa-solid fa-angle-left"></i>
+                                              </span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+
+                                    {% for i in products.paginator.page_range %}
+                                    {% if products.number == i %}
+                                    <li class="page-item active" aria-current="page">
+                                        <span class="page-link">{{i}}</span>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{i}}">{{i}}</a>
+                                    </li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    {% if products.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link arrow" href="?page={{ products.next_page_number }}"
+                                           aria-label="Next">
+                                              <span aria-hidden="true">
+                                                  <i class="fa-solid fa-angle-right"></i>
+                                              </span>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            {% endif %}
+                        </div>
+                        {% else %}
+                        <div class="row">
+                            <div class="col-sm-12">
+                                {% if keyword %}
+                                <div class="search-noresult">
+                                    <div class="search-bar">
+                                        <form class="searchField-form" action="{% url 'search' %}" method="get">
+                                            {% csrf_token %}
+                                            <input name="keyword" maxlength="100" placeholder="Search Products"
+                                                   required/>
+                                            <button class="search-bar-btn" type="submit">
+                                                <i class="fa-solid fa-magnifying-glass"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="search-noresult-text">
+                                    Sorry, related product(s) of "{{ keyword }}" cannot be found.
+                                    <div class="help-block">
+                                        We recommend you to check if there are any typing mistakes,
+                                        and search again with concise keywords.
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="product-list-empty-placeholder">
+                                    Sorry, there are no products in this category.
+                                    <div class="help-block">
+                                        We recommend you to select other categories, or search with concise keywords.
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

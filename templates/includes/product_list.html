@@ -1,0 +1,15 @@
+<div class="product-list">
+    <div class="block-inner">
+        <a class="label" href="{% url 'store' %}">All Product</a>
+        {% if categories %}
+        /
+        <a class="label" href="{{ categories.get_url }}">{{ categories.category_name }}</a>
+        {% elif "search" in request.path %}
+        /
+        <span class="label">{{ keyword }}</span>
+        {% elif single_product %}
+        /
+        <a class="label" href="{{ single_product.category.get_url }}">{{ single_product.category }}</a>
+        {% endif %}
+    </div>
+</div>

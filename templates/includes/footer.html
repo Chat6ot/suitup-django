@@ -1,0 +1,42 @@
+<footer id="footer">
+    <div class="grids">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="box-info">
+                        <h5 class="footer-title">POLICIES</h5>
+                        <ul>
+                            <li><a href="#">PURCHASE CONDITIONS</a></li>
+                            <li><a href="#">PRIVACY POLICY</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="box-info">
+                        <h5 class="footer-title">HELP</h5>
+                        <ul>
+                            <li><a href="#">PAYMENT</a></li>
+                            <li><a href="#">EXCHANGES AND RETURNS</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <p class="copy-right">2023 © SUIT UP</p>
+        </div>
+    </div>
+</footer>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.variant-image a').click(function(e){
+            e.preventDefault();
+            $('.variant-gallery-stage img').attr('src', $(this).attr("href"));
+        })
+    })
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+<div id="cart-panel">
+    <div class="cart-items">
+        <div class="cart-item clearfix">
+            <a href="{{ cart_item.product.get_url }}">
+                <img src=cart_item.product.image" class="cart-item-image">
+            </a>
+            <div class="cart-item-content">
+                <div class="">{{ cart_item.product.product_name }}</div>
+                <div class="price-details">
+                    {{ cart_item.quantity }} <span>x</span> <span>${{ cart_item.product.price }}</span>
+                </div>
+            </div>
+            <div class="remove">
+                <a href="#" class="remove-btn">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="checkout-btn">
+        <button></button>
+    </div>
+</div>

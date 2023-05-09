@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main>
+    <div class="grids">
+        <div class="checkout-page">
+            <div class="container">
+                <div class="checkout-nav">
+                    <a href="{% url 'cart' %}">
+                    <span class="step visited">
+                        <span class="badges">
+                            <span class="text">1</span>
+                        </span>
+                        <span>Shopping Cart</span>
+                    </span>
+                    </a>
+                    <span class="step active">
+                        <span class="badges">
+                            <span class="text">2</span>
+                        </span>
+                        <span>Fill Information</span>
+                    </span>
+                    <span class="step">
+                        <span class="badges">
+                            <span class="text">3</span>
+                        </span>
+                        <span>Order Confirmation</span>
+                    </span>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h5>Order Total: ${{ grand_total }}</h5>
+                        {% if quantity == 1 %}
+                        <span>Shopping Cart ({{ quantity }} item) </span>
+                        {% else %}
+                        <span>Shopping Cart ({{ quantity }} item) </span>
+                        {% endif %}
+                    </div>
+                    <div class="cart-summary">
+                        <div class="panel-body clearfix">
+                            <section class="shopping-cart">
+                                <div class="cart-items">
+                                    <div class="table-header row">
+                                        <div class="col-sm-4">Product Information</div>
+                                        <div class="col-sm-2">Promotions</div>
+                                        <div class="col-sm-2 text-center">Unit Price</div>
+                                        <div class="col-sm-2 text-center">QTY</div>
+                                        <div class="col-sm-2 text-center">Subtotal</div>
+                                    </div>
+                                    {% for cart_item in cart_items %}
+                                    <div class="table-row row">
+                                        <div class="col-xs-12 col-sm-4">
+                                            <a href="{{ cart_item.product.get_url }}" class="product-image"
+                                               style="background-image: url({{ cart_item.product.image.url }})"> </a>
+                                            <div class="product-name">
+                                                <span>{{ cart_item.product.product_name }}</span>
+                                                {% if cart_item.variations.all %}
+                                                {% for item in cart_item.variations.all %}
+                                                <span class="variant-name">
+                                                    {{ item.variation_category | capfirst }}: {{ item.variation_value | capfirst }}
+                                                </span>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-2"></div>
+                                        <div class="col-xs-12 col-sm-2 price-label text-center">
+                                            ${{ cart_item.product.price }}
+                                        </div>
+                                        <div class="col-xs-12 col-sm-2 text-center">{{ cart_item.quantity }}</div>
+                                        <div class="col-xs-12 col-sm-2 price-label text-center">${{cart_item.sub_total}}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                            <div class="order-summary col-sm-5 pull-right">
+                                <div class="section-line clearfix">
+                                    <span class="pull-left">Item Subtotal:</span>
+                                    <span class="pull-right">${{ total }}</span>
+                                </div>
+                                <div class="section-line clearfix">
+                                    <span class="pull-left">Delivery Fee:</span>
+                                    <span class="pull-right">${{ delivery_fee }}</span>
+                                </div>
+                                <div class="section-line total clearfix">
+                                    <span class="pull-left">Total:</span>
+                                    <span class="pull-right">${{ grand_total }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form action="{% url 'place_order' %}" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <section class="delivery-form">
+                                <div class="section-header">
+                                    <h5>Delivery Detail</h5>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-group">
+                                        <label for="recipient-name">Recipient Name</label>
+                                        <input class="form-control" id="recipient-name" type="text"
+                                               name="recipient_name" required>
+                                        <span class="help-block">
+                                            Please fill in recipient's full name to facilitate smooth delivery
+                                        </span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-phone">Recipient Contact Number</label>
+                                        <input class="form-control" id="recipient-phone" type="text"
+                                               name="phone" required>
+                                    </div>
+                                    <hr>
+                                    <p>Address</p>
+                                    <p>Shipping Destination: Taiwan</p>
+                                    <div class="form-group row">
+                                        <input class="form-control city-district justified" type="text"
+                                               placeholder="City" name="city" required>
+                                        <input class="form-control city-district" type="text" placeholder="District"
+                                               name="district" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input class="form-control" type="text" placeholder="Address"
+                                               name="address_line" required>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        <div class="col-sm-6">
+                            <section class="payment-form">
+                                <div class="section-header">
+                                    <h5>Payment Detail</h5>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-group">
+                                        <label for="order-payment-method">Payment Method</label>
+                                        <select id="order-payment-method" class="form-control" name="payment_method">
+                                            <option value="bank_transfer">Bank Transfer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </section>
+                            <section class="order-note">
+                                <div class="section-header">
+                                    <h5>Order Note</h5>
+                                </div>
+                                <div class="section-body">
+                                    <div class="form-group">
+                                        <textarea class="form-control" name="order_note" rows="4"></textarea>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-footer clearfix">
+                            <a href="{% url 'cart' %}" class="btn pull-left">< Back to Shopping Cart</a>
+                            <button class="btn btn-place-order pull-right" type="submit">Place Order</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

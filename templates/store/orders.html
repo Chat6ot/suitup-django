@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main>
+    <div class="grids">
+        <div class="orders-page">
+            <div class="container">
+                <div class="checkout-nav">
+                    <span class="step visited">
+                        <span class="badges">
+                            <span class="text">1</span>
+                        </span>
+                        <span>Shopping Cart</span>
+                    </span>
+                    <span class="step visited">
+                        <span class="badges">
+                            <span class="text">2</span>
+                        </span>
+                        <span>Fill Information</span>
+                    </span>
+                    <span class="step active">
+                        <span class="badges">
+                            <span class="text">3</span>
+                        </span>
+                        <span>Order Confirmation</span>
+                    </span>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h5>Order Total: ${{ grand_total }}</h5>
+                        {% if quantity == 1 %}
+                        <span>Shopping Cart ({{ quantity }} item) </span>
+                        {% else %}
+                        <span>Shopping Cart ({{ quantity }} items) </span>
+                        {% endif %}
+                    </div>
+                    <div class="cart-summary">
+                        <div class="panel-body clearfix">
+                            <section class="shopping-cart">
+                                <div class="cart-items">
+                                    <div class="table-header row">
+                                        <div class="col-sm-4">Product Information</div>
+                                        <div class="col-sm-2">Promotions</div>
+                                        <div class="col-sm-2 text-center">Unit Price</div>
+                                        <div class="col-sm-2 text-center">QTY</div>
+                                        <div class="col-sm-2 text-center">Subtotal</div>
+                                    </div>
+                                    {% for order_product in order_products %}
+                                    <div class="table-row row">
+                                        <div class="col-xs-12 col-sm-4">
+                                            <a href="{{ order_product.product.get_url }}" class="product-image"
+                                               style="background-image: url({{ order_product.product.image.url }})"> </a>
+                                            <div class="product-name">
+                                                <span>{{ order_product.product.product_name }}</span>
+
+                                                {% if order_product.variations.all %}
+                                                {% for item in order_product.variations.all %}
+                                                <span class="variant-name">
+                                                    {{ item.variation_category | capfirst }}: {{ item.variation_value | capfirst }}
+                                                </span>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-2"></div>
+                                        <div class="col-xs-12 col-sm-2 price-label text-center">
+                                            ${{ order_product.product.price }}
+                                        </div>
+                                        <div class="col-xs-12 col-sm-2 text-center">{{ order_product.quantity }}</div>
+
+                                        <div class="col-xs-12 col-sm-2 price-label text-center">
+                                            ${% widthratio order_product.product.price 1 order_product.quantity %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                            <div class="order-summary col-sm-5 pull-right">
+                                <div class="section-line clearfix">
+                                    <span class="pull-left">Item Subtotal:</span>
+                                    <span class="pull-right">${{ total }}</span>
+                                </div>
+                                <div class="section-line clearfix">
+                                    <span class="pull-left">Delivery Fee:</span>
+                                    <span class="pull-right">${{ delivery_fee }}</span>
+                                </div>
+                                <div class="section-line total clearfix">
+                                    <span class="pull-left">Total:</span>
+                                    <span class="pull-right">${{ grand_total }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-body">
+                        <div class="confirm-message clearfix">
+                            <i class="check fa-regular fa-circle-check pull-left"></i>
+                            <h5>Thank you! Your order has been submitted!</h5>
+                            Order No. {{order.order_number}}
+                            <p></p>
+                            <p>
+                                An order confirmation email will be sent to below email:
+                                <br>
+                                <b>{{order.email}} </b>
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 order-detail-section">
+                                <h5>Order Detail</h5>
+                                <div class="row">
+                                    <span class="col-sm-4">Order Placing Date:</span>
+                                    <span class="col-sm-8">{{order.created_at}}</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-sm-4">Order Status:</span>
+                                    <span class="col-sm-8">{{order.status}}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 order-detail-section">
+                                <h5>Customer Detail</h5>
+                                <div class="row">
+                                    <span class="col-sm-4">Name:</span>
+                                    <span class="col-sm-8">{{order.user.username}}</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-sm-4">Contact Number:</span>
+                                    <span class="col-sm-8">{{order.phone}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 order-detail-section">
+                                <h5>Delivery Detail</h5>
+                                <div class="row">
+                                    <span class="col-sm-4">Recipient Name:</span>
+                                    <span class="col-sm-8">{{order.recipient_name}}</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-sm-4">Recipient Contact Phone:</span>
+                                    <span class="col-sm-8">{{order.phone}}</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-sm-4">Delivery Option:</span>
+                                    <span class="col-sm-8">中華郵政</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-sm-4">Address:</span>
+                                    <span class="col-sm-8">
+                                        {{order.address_line}}
+                                        <br>
+                                        {{order.district}} {{order.city}}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 order-detail-section">
+                                <h5>Payment Detail</h5>
+                                <div class="row">
+                                    <span class="col-sm-4">Payment Type:</span>
+                                    <span class="col-sm-8">Bank Transfer</span>
+                                </div>
+                                <div class="row">
+                                    <span class="col-sm-4">Payment Instructions:</span>
+                                    <span class="col-sm-8">(Our Bank Information)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer clearfix">
+                        <a href="{% url 'home' %}" class="btn btn-continue-shopping pull-right">Continue Shopping</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

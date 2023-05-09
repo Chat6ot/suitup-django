@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main>
+    <div class="grids">
+        <div class="member-page">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="content-box">
+                        <div class="content-tabset">
+                            <ul class="nav nav-tabs nav-justified">
+                                <li class="nav-item">
+                                    <a href="{% url 'register' %}" class="nav-link nav-block">Sign up</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link nav-block">Sign in</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                {% include "includes/alert.html" %}
+                                <div class="tabset-title">Login With Email</div>
+                                <div class="form-container">
+                                    <form action="{% url 'login' %}" method="post" name="userForm">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <input type="email" placeholder="Email" name="email">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="password" placeholder="Password" name="password">
+                                        </div>
+                                        <div class="actions">
+                                            <button class="btn signin-btn" type="submit">Let's go!</button>
+                                        </div>
+                                    </form>
+                                    <div class="links-container">
+                                        <a href="{% url 'forgot_password' %}">Forgot your password?</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
