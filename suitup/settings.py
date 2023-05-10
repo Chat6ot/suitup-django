@@ -27,7 +27,7 @@ SECRET_KEY = config("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = ["django-suitup-env.eba-c92ckk4m.ap-northeast-1.elasticbeanstalk.com"]
+ALLOWED_HOSTS = []
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_SAVE_EVERY_REQUEST = True
