@@ -22,6 +22,7 @@ def add_to_cart(request, product_id):
         product_variation = []
 
         if request.method == 'POST':
+
             add_to_cart = request.POST.get('add_to_cart')
             for item in request.POST:
                 key = item

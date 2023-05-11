@@ -45,7 +45,7 @@
                                     {% csrf_token %}
                                     <div class="size-select">
                                         <select name="size" class="form-select" required>
-                                            <option selected disabled>Size</option>
+                                            <option value="" selected disabled>Size</option>
                                             {% for i in single_product.variation_set.sizes %}
                                             <option value="{{ i.variation_value | lower }}">
                                                 {{ i.variation_value | capfirst }}

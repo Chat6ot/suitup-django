@@ -37,20 +37,22 @@
                 <div class="row">
                     {% for product in products %}
                     <article class="col-md-3 col-sm-6">
-                        {% if product.stock < 1 %}
-                        <form action="{{ product.get_url }}">
-                            {% csrf_token %}
-                            <button class="btn btn-in-card" type="submit">
-                                VIEW DETAILS
-                            </button>
-                        </form>
-                        {% else %}
-                        <form action="{% url 'add_to_cart' product.id %}" method="post">
-                            {% csrf_token %}
-                            <button class="btn btn-in-card" type="submit" name="add_to_cart" value="True">
-                                ADD TO CART
-                            </button>
-                        </form>
+                        {% if not product.variation_set.sizes %}
+                            {% if product.stock < 1 %}
+                            <form action="{{ product.get_url }}">
+                                {% csrf_token %}
+                                <button class="btn btn-in-card" type="submit">
+                                    VIEW DETAILS
+                                </button>
+                            </form>
+                            {% else %}
+                            <form action="{% url 'add_to_cart' product.id %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-in-card" type="submit" name="add_to_cart" value="True">
+                                    ADD TO CART
+                                </button>
+                            </form>
+                            {% endif %}
                         {% endif %}
                         <div class="card">
                             <a href="{{ product.get_url }}">
