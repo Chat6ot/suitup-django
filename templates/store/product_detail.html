@@ -43,6 +43,7 @@
                             <div class="variation-details">
                                 <form action="{% url 'add_to_cart' single_product.id %}" method="post">
                                     {% csrf_token %}
+                                    {% if single_product.variation_set.sizes %}
                                     <div class="size-select">
                                         <select name="size" class="form-select" required>
                                             <option value="" selected disabled>Size</option>
@@ -53,6 +54,7 @@
                                             {% endfor %}
                                         </select>
                                     </div>
+                                    {% endif %}
 
                                     <div class="buttons-container">
                                         <button class="btn btn-bd-custom-cart" type="submit" name="add_to_cart"
