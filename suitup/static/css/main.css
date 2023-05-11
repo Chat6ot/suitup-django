@@ -439,6 +439,10 @@ article a .info-box .price {
   margin-bottom: 10px;
 }
 
+.add-to-cart-form {
+    margin-bottom: 0px;
+}
+
 /* ----------------------- paginator ----------------------- */
 
 .store .productList-paginator {
