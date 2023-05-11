@@ -393,6 +393,10 @@ article a .info-box .price {
   font-weight: bold;
 }
 
+.add-to-cart-form {
+    margin-bottom: 0px;
+}
+
 /* ------------------------- store ------------------------- */
 
 .store {
