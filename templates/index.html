@@ -1,7 +1,6 @@
 {% extends 'base.html' %} {% load static %} {% block content %}
 <main>
     <div class="grids">
-        <!--    {% include "includes/cart_panel.html" %}-->
         <div class="container">
             <div class="carousel">
                 <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
@@ -35,7 +34,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    {% for product in products %}
+                    {% for product in top_products %}
                     <article class="col-md-3 col-sm-6">
                         {% if not product.variation_set.sizes %}
                             {% if product.stock < 1 %}
