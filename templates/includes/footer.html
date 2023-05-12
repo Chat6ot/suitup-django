@@ -36,6 +36,23 @@
             $('.variant-gallery-stage img').attr('src', $(this).attr("href"));
         })
     })
+
+    $(document).ready(function() {
+        $('.minus-btn').on('click', function() {
+            var quantityInput = $('#quantity');
+            var currentQuantity = parseInt(quantityInput.val());
+            if (currentQuantity > 1) {
+              quantityInput.val(currentQuantity - 1);
+            }
+        });
+
+        $('.plus-btn').on('click', function() {
+            var quantityInput = $('#quantity');
+            var currentQuantity = parseInt(quantityInput.val());
+            quantityInput.val(currentQuantity + 1);
+        });
+    });
+
 </script>
 
 

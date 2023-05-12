@@ -15,6 +15,7 @@ def _cart_id(request):
 
 def add_to_cart(request, product_id):
     current_user = request.user
+    order_quantity = 1
     add_to_cart = False
     product = Product.objects.get(id=product_id)
 
@@ -22,6 +23,11 @@ def add_to_cart(request, product_id):
         product_variation = []
 
         if request.method == 'POST':
+            order_quantity = request.POST.get("quantity")
+            if order_quantity:
+                order_quantity = int(order_quantity)
+            else:
+                order_quantity = 1
 
             add_to_cart = request.POST.get('add_to_cart')
             for item in request.POST:
@@ -52,7 +58,7 @@ def add_to_cart(request, product_id):
                 index = ex_var_list.index(product_variation)
                 item_id = ids[index]
                 item = CartItem.objects.get(product=product, id=item_id)
-                item.quantity += 1
+                item.quantity += order_quantity
                 item.save()
 
             else:
@@ -64,7 +70,7 @@ def add_to_cart(request, product_id):
         else:
             cart_item = CartItem.objects.create(
                 product=product,
-                quantity=1,
+                quantity=order_quantity,
                 user=current_user,
             )
             if len(product_variation) > 0:
@@ -79,6 +85,12 @@ def add_to_cart(request, product_id):
         product_variation = []
 
         if request.method == 'POST':
+            order_quantity = request.POST.get("quantity")
+            if order_quantity:
+                order_quantity = int(order_quantity)
+            else:
+                order_quantity = 1
+
             add_to_cart = request.POST.get('add_to_cart')
             for item in request.POST:
                 key = item
@@ -115,11 +127,11 @@ def add_to_cart(request, product_id):
                 index = ex_var_list.index(product_variation)
                 item_id = ids[index]
                 item = CartItem.objects.get(product=product, id=item_id)
-                item.quantity += 1
+                item.quantity += order_quantity
                 item.save()
 
             else:
-                item = CartItem.objects.create(product=product, quantity=1, cart=cart)
+                item = CartItem.objects.create(product=product, quantity=order_quantity, cart=cart)
                 if len(product_variation) > 0:
                     item.variations.add(*product_variation)
                 item.save()
@@ -127,7 +139,7 @@ def add_to_cart(request, product_id):
         else:
             cart_item = CartItem.objects.create(
                 product=product,
-                quantity=1,
+                quantity=order_quantity,
                 cart=cart,
             )
             if len(product_variation) > 0:

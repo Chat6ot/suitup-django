@@ -55,7 +55,22 @@
                                         </select>
                                     </div>
                                     {% endif %}
-
+                                    <div class="quantity-group">
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn decrease-btn minus-btn">
+                                                    <i class="fa-solid fa-minus"></i>
+                                                </button>
+                                            </span>
+                                            <input class="input-item-quantity" type="number" id="quantity"
+                                                   name="quantity" value="1" min="1" max="{{ single_product.stock }}">
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn increase-btn plus-btn">
+                                                    <i class="fa-solid fa-plus"></i>
+                                                </button>
+                                            </span>
+                                        </div>
+                                    </div>
                                     <div class="buttons-container">
                                         <button class="btn btn-bd-custom-cart" type="submit" name="add_to_cart"
                                                 value="True">ADD TO CART
