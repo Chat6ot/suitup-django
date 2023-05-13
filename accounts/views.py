@@ -78,41 +78,41 @@ def login(request):
         if user:
             try:
                 cart = Cart.objects.get(cart_id=_cart_id(request))
-                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
-                if is_cart_item_exists:
+                cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                if cart_item_exists:
 
-                    # Getting the product variations by cart id
-                    cart_items_id = CartItem.objects.filter(cart=cart)
-                    product_variation = []
-                    for item in cart_items_id:
+                    # Get the product variations by cart id
+                    cart_items_by_id = CartItem.objects.filter(cart=cart)
+                    variations_by_id = []
+                    for item in cart_items_by_id:
                         variation = item.variations.all()
-                        product_variation.append(list(variation))
+                        variations_by_id.append(list(variation))
 
                     # Get the cart items from the user to access his product variations
-                    cart_items_user = CartItem.objects.filter(user=user)
-                    ex_var_list = []
-                    ids = []
+                    cart_items_by_user = CartItem.objects.filter(user=user)
+                    ids = [item.id for item in cart_items_by_user]
 
-                    for item in cart_items_user:
-                        ids.append(item.id)
-                        existing_variation = item.variations.all()
-                        ex_var_list.append(list(existing_variation))
+                    variations_by_cart = []
+                    for item in cart_items_by_user:
+                        variation = item.variations.all()
+                        variations_by_cart.append(list(variation))
 
-                    for pr in product_variation:
-                        if pr in ex_var_list:
-                            index = ex_var_list.index(pr)
+                    for variation_id in variations_by_id:
+                        if variation_id in variations_by_cart:
+                            index = variations_by_cart.index(variation_id)
                             item_id = ids[index]
                             item = CartItem.objects.get(id=item_id)
                             item.quantity += 1
                             item.user = user
                             item.save()
-                        else:
-                            cart_items_id = CartItem.objects.filter(cart=cart)
-                            for item in cart_items_id:
-                                item.user = user
-                                item.save()
+
+                    for item in cart_items_by_id:
+                        if item.user != user:
+                            item.user = user
+                            item.save()
             except:
                 pass
+
             auth.login(request, user)
             url = request.META.get('HTTP_REFERER')
             try:
@@ -126,6 +126,7 @@ def login(request):
         else:
             messages.error(request, "Invalid login credentials")
             return redirect("login")
+
     return render(request, "accounts/login.html")
 
 

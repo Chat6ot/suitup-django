@@ -69,14 +69,22 @@ def add_to_cart(request, product_id):
             item = CartItem.objects.get(product=product, id=item_id)
             item.quantity += order_quantity
             item.save()
-
-    _create_cart_item(
-        product=product,
-        quantity=order_quantity,
-        user=current_user,
-        cart=cart,
-        variations=product_variation,
-    )
+        else:
+            _create_cart_item(
+                product=product,
+                quantity=order_quantity,
+                user=current_user,
+                cart=cart,
+                variations=product_variation,
+            )
+    else:
+        _create_cart_item(
+            product=product,
+            quantity=order_quantity,
+            user=current_user,
+            cart=cart,
+            variations=product_variation,
+        )
 
     if add_to_cart:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
