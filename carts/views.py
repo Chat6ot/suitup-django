@@ -13,6 +13,16 @@ def _cart_id(request):
     return cart
 
 
+def _create_cart_item(product, quantity, user, cart, variations):
+    if user:
+        cart_item = CartItem.objects.create(product=product, quantity=quantity, user=user)
+    else:
+        cart_item = CartItem.objects.create(product=product, quantity=quantity, cart=cart)
+    if variations:
+        cart_item.variations.add(*variations)
+    cart_item.save()
+
+
 def add_to_cart(request, product_id):
     current_user = request.user if request.user.is_authenticated else None
     cart = None
@@ -60,7 +70,7 @@ def add_to_cart(request, product_id):
             item.quantity += order_quantity
             item.save()
 
-    create_cart_item(
+    _create_cart_item(
         product=product,
         quantity=order_quantity,
         user=current_user,
@@ -73,21 +83,13 @@ def add_to_cart(request, product_id):
     return redirect("cart")
 
 
-def create_cart_item(product, quantity, user, cart, variations):
-    if user:
-        cart_item = CartItem.objects.create(product=product, quantity=quantity, user=user)
-    else:
-        cart_item = CartItem.objects.create(product=product, quantity=quantity, cart=cart)
-    if variations:
-        cart_item.variations.add(*variations)
-    cart_item.save()
-
-
 def decrease_cart(request, product_id, cart_item_id):
+    current_user = request.user
     product = get_object_or_404(Product, id=product_id)
+
     try:
-        if request.user.is_authenticated:
-            cart_item = CartItem.objects.get(product=product, user=request.user, id=cart_item_id)
+        if current_user.is_authenticated:
+            cart_item = CartItem.objects.get(product=product, user=current_user, id=cart_item_id)
         else:
             cart = Cart.objects.get(cart_id=_cart_id(request))
             cart_item = CartItem.objects.get(product=product, cart=cart, id=cart_item_id)
