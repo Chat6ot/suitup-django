@@ -14,36 +14,27 @@ def _cart_id(request):
 
 
 def add_to_cart(request, product_id):
-    current_user = request.user
-    order_quantity = 1
-    add_to_cart = False
+    current_user = request.user if request.user.is_authenticated else None
+    order_quantity = int(request.POST.get("quantity", 1))
+    add_to_cart = request.POST.get('add_to_cart', False)
+
     product = Product.objects.get(id=product_id)
 
-    if current_user.is_authenticated:
+    if current_user:
         product_variation = []
-
         if request.method == 'POST':
-            order_quantity = request.POST.get("quantity")
-            if order_quantity:
-                order_quantity = int(order_quantity)
-            else:
-                order_quantity = 1
-
-            add_to_cart = request.POST.get('add_to_cart')
             for item in request.POST:
                 key = item
                 value = request.POST[key]
-
                 try:
                     variation = Variation.objects.get(product=product,
                                                       variation_category__iexact=key,
                                                       variation_value__iexact=value)
                     product_variation.append(variation)
-                except:
+                except Variation.DoesNotExist:
                     pass
 
         is_cart_item_exists = CartItem.objects.filter(product=product, user=current_user).exists()
-
         if is_cart_item_exists:
             cart_item = CartItem.objects.filter(product=product, user=current_user)
             ex_var_list = []
@@ -77,25 +68,13 @@ def add_to_cart(request, product_id):
                 cart_item.variations.add(*product_variation)
             cart_item.save()
 
-        if add_to_cart:
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        return redirect("cart")
-
     else:
         product_variation = []
 
         if request.method == 'POST':
-            order_quantity = request.POST.get("quantity")
-            if order_quantity:
-                order_quantity = int(order_quantity)
-            else:
-                order_quantity = 1
-
-            add_to_cart = request.POST.get('add_to_cart')
             for item in request.POST:
                 key = item
                 value = request.POST[key]
-
                 try:
                     variation = Variation.objects.get(product=product,
                                                       variation_category__iexact=key,
@@ -103,7 +82,6 @@ def add_to_cart(request, product_id):
                     product_variation.append(variation)
                 except:
                     pass
-
         try:
             cart = Cart.objects.get(cart_id=_cart_id(request))
         except Cart.DoesNotExist:
@@ -112,7 +90,6 @@ def add_to_cart(request, product_id):
         cart.save()
 
         is_cart_item_exists = CartItem.objects.filter(product=product, cart=cart).exists()
-
         if is_cart_item_exists:
             cart_item = CartItem.objects.filter(product=product, cart=cart)
             ex_var_list = []
@@ -146,9 +123,9 @@ def add_to_cart(request, product_id):
                 cart_item.variations.add(*product_variation)
             cart_item.save()
 
-        if add_to_cart:
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        return redirect("cart")
+    if add_to_cart:
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    return redirect("cart")
 
 
 def decrease_cart(request, product_id, cart_item_id):
