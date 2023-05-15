@@ -70,21 +70,9 @@ def add_to_cart(request, product_id):
             item.quantity += order_quantity
             item.save()
         else:
-            _create_cart_item(
-                product=product,
-                quantity=order_quantity,
-                user=current_user,
-                cart=cart,
-                variations=product_variation,
-            )
+            _create_cart_item(product, order_quantity, current_user, cart, product_variation)
     else:
-        _create_cart_item(
-            product=product,
-            quantity=order_quantity,
-            user=current_user,
-            cart=cart,
-            variations=product_variation,
-        )
+        _create_cart_item(product, order_quantity, current_user, cart, product_variation)
 
     if add_to_cart:
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

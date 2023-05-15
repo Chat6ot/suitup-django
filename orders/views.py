@@ -5,7 +5,6 @@ from .models import Order, OrderProduct
 from store.models import Product
 import datetime
 from django.core.mail import EmailMessage
-from django.core import serializers
 from django.template.loader import render_to_string
 
 
